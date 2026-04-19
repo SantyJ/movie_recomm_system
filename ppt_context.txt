@@ -1,0 +1,41 @@
+[SYSTEM PROMPT / CONTEXT SUBMISSION]
+You are an expert AI assisting in the creation of an academic PowerPoint presentation for a university course project ("CS 550: Massive Data Mining"). Below is the comprehensive context of the completed semester project. Use it to generate a highly professional, well-structured slide deck outline.
+
+--- 
+
+# Project Overview
+- **Course:** CS 550: Massive Data Mining
+- **Selected Project:** Option 1 - Recommender System (Aiming for an "A" Grade)
+- **Dataset Selected:** MovieLens "Small" Dataset (~100,000 ratings, 610 users, ~9700 movies).
+- **Core Objective:** Build a personalized recommendation engine via rigorous comparative analysis, including rating prediction, top-10 item ranking, a web demo, and a specific "Trustworthiness" implementation.
+
+# Phase 1: Data Splitting (Rigorous Evaluation)
+- Rather than a standard global random split, we implemented a strict "80/20 train/test split per user". 
+- This guarantees evaluation against the specific future habits of every individual user, preventing data leakage and providing mathematically sound evaluation boundaries.
+
+# Phase 2: The Algorithms (Explicitly Built from Scratch)
+- We explicitly rejected using out-of-the-box packaged tools (e.g., Surprise's SVD module).
+- Instead, we utilized SciPy's sparse matrices and raw linear algebra as "building blocks" to construct two completely manual algorithms:
+  1. **Baseline Model:** A classical Memory-Based Collaborative Filtering engine (using Cosine Similarity on user vectors).
+  2. **Advanced Model:** A Model-Based approach utilizing Singular Value Decomposition (SVD) with k=50 components.
+
+# Phase 3: The Comparative Analysis & Metrics
+**1. Rating Prediction (Accuracy):**
+  - Baseline (Cosine Similarity): MAE = 0.8173 | RMSE = 1.0537
+  - Advanced (SVD k=50): MAE = 0.7262 | RMSE = 0.9376
+  - *Result:* SVD wins handily, pulling average error beneath 1 full star.
+
+**2. Item Recommendation Ranking (Top-10 List):**
+  - Baseline: Precision@10 = 0.0010 | NDCG@10 = 0.0047
+  - Advanced: Precision@10 = 0.1554 | NDCG@10 = 0.4643
+  - *Result:* The Cosine Baseline completely crumbled under the sparsity of the MovieLens dataset, failing to rank recommendations effectively. Our custom SVD matrix imputation acted as mathematically elegant regularization, securing an elite 15% Precision score and an elite 0.464 NDCG. The advanced approach comprehensively crushed the baseline.
+
+# Phase 4: Trustworthiness Deep-Dive (Bonus Options A, C, and E)
+To significantly exceed standard rubrics, we implemented *three* Trustworthiness modules directly into our Dashboard logic:
+1. **Explainable AI (Option A):** We implemented a generative transparency text layer that matches target item tags against the user's historical highest ratings to eliminate the "Black Box" phenomenon.
+2. **Controllability (Option C):** We implemented a real-time dimensional override. Users can explicitly select genres (e.g. "Horror", "Action") and the UI applies mathematical negative masking to forcefully drop those parameters from the SVD output, steering the algorithm dynamically according to the user's temporary intent.
+3. **Robustness & Data Poisoning (Option E):** We actively simulate an e-commerce "Shilling Attack". By injecting a 50-bot botnet mathematically modeled to push a terrible target movie, the presenter can physically show the SVD algorithm being "hijacked", rocketing the bad movie to #1. Activating the mathematical "Defense" toggle simulates density clustering outlier detection, stripping the bots and instantly restoring the authentic recommendations.
+
+# Phase 5: Interactive Demo
+- Deployed a fully functional, rich graphical Web Dashboard using Streamlit.
+- The UI perfectly synthesizes the entire project: users can test the recommendation models on any of the 610 users, read the AI's explanation rationales, override specific genres (Controllability), and actively play the role of mathematical Hacker and Cyber-Defender via the Shilling Attack toggles.

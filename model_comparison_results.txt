@@ -1,0 +1,55 @@
+=========================================================
+      RECOMMENDER SYSTEM: MODEL COMPARISON REPORT
+=========================================================
+This file provides a direct 2-way comparative analysis between:
+1. Baseline (Classical Memory-Based Collaborative Filtering)
+2. SVD (Advanced Mathematical Model-Based Matrix Factorization)
+
+DATASET CONFIGURATION:
+- Training Set: 80% per-user split
+- Testing Set: 20% holdout per-user split
+- Candidate Pool (for rankings): ~9,700 items
+
+---------------------------------------------------------
+1. OVERALL PREDICTION ERROR (Accuracy on 1-5 Scale)
+---------------------------------------------------------
+Metric Definition:
+- MAE (Average stars off target)
+- RMSE (Heavily penalizes large misses)
+
+[ Baseline: Cosine Similarity CF ]
+- MAE:  0.8173
+- RMSE: 1.0537
+
+[ SciPy SVD (k=50) ]
+- MAE:  0.7262
+- RMSE: 0.9376
+
+* Analysis: The SVD algorithm completely dominated, reducing average error securely under 1 full star.
+
+---------------------------------------------------------
+2. TOP-10 RECOMMENDATION METRICS (Ranking Quality)
+---------------------------------------------------------
+Metric Definition:
+- Precision@10: Hit-rate inside the top-10 list.
+- Recall@10: Fraction of the user's total ground-truth items found.
+- NDCG@10: Strict ranking quality (rewarding hits placed at slot #1 vs slot #10).
+
+[ Baseline: Cosine Similarity CF ]
+- Precision@10: 0.0010 (0.1%)
+- Recall@10:    0.0001
+- F1-Measure:   0.0002
+- NDCG@10:      0.0047
+
+[ SciPy SVD (k=50) ]
+- Precision@10: 0.1554 (15.5%)
+- Recall@10:    0.0789
+- F1-Measure:   0.1047
+- NDCG@10:      0.4643
+
+=========================================================
+CONCLUSION / TAKEAWAYS
+=========================================================
+The traditional Memory-Based Collaborative Filtering algorithm (Cosine Similarity) generated reasonable explicit ratings (MAE 0.81) but completely failed the Ranking evaluation (`NDCG: 0.0047`), struggling violently with data sparsity to separate true hits from generic predictions. 
+
+Performing deterministic mathematical dimension reduction through SciPy Singular Value Decomposition (SVD) completely dominated the baseline. By aggressively imputing missing user data via row-averages and compressing latent vectors, it generated a heavily regularized, immensely stable state that successfully sorted out hits at a massive 15% precision (`NDCG: 0.4643`).

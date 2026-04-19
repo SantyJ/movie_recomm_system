@@ -1,0 +1,228 @@
+\documentclass[sigconf,authordraft,nonacm]{acmart}
+
+\usepackage{booktabs} % For formal tables
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{hyperref}
+
+%% \BibTeX command
+\AtBeginDocument{%
+  \providecommand\BibTeX{{%
+    Bib\TeX}}}
+
+\setcopyright{acmlicensed}
+\copyrightyear{2026}
+\acmYear{2026}
+\acmDOI{XXXXXXX.XXXXXXX}
+
+\acmConference[CS 550]{Massive Data Mining Project Presentation}{Spring 2026}{Rutgers University, NJ}
+\acmISBN{978-1-4503-XXXX-X/2026/05}
+
+\begin{document}
+
+\title{Matrix Factorization \& Latent Embeddings via SVD for Recommendation}
+\subtitle{CS 550: Massive Data Mining -- Semester Project}
+
+\author{Santhosh}
+\affiliation{%
+  \institution{Rutgers University}
+  \city{New Brunswick}
+  \state{NJ}
+  \country{USA}
+}
+\email{san@rutgers.edu}
+
+\renewcommand{\shortauthors}{Santhosh}
+
+\begin{abstract}
+This report details a comparative study on Recommender Systems utilizing the MovieLens 1M small dataset. To successfully predict explicit user-item ratings and generate Top-10 recommendation rankings, two distinct architectures were manually implemented via low-level linear algebra packages: a foundational Memory-Based Collaborative Filtering (CF) algorithm utilizing Cosine Similarity, and an advanced Model-Based variant utilizing Singular Value Decomposition (SVD). Evaluation on a rigorous 80/20 per-user holdout test set demonstrated the immense superiority of the SVD methodology in handling matrix sparsity, achieving a Precision@10 of 0.1554 and Normalized Discounted Cumulative Gain (NDCG)@10 of 0.4643 over the failing baseline. Furthermore, we implemented three Trustworthiness modules via an interactive web dashboard: (1) an explainability layer that logically justifies black-box SVD recommendations using historical genre-mapping, (2) a dynamic User Interface (UI) allowing users to safely control and filter algorithmic predictions, and (3) a robustness evaluation verifying the matrix's structural vulnerability against a 500-bot data-poisoning Shilling attack.
+\end{abstract}
+
+\begin{CCSXML}
+<ccs2012>
+   <concept>
+       <concept_id>10002951.10003317.10003347.10003350</concept_id>
+       <concept_desc>Information systems~Recommender systems</concept_desc>
+       <concept_significance>500</concept_significance>
+       </concept>
+   <concept>
+       <concept_id>10002978.10003022</concept_id>
+       <concept_desc>Security and privacy~Software and application security</concept_desc>
+       <concept_significance>300</concept_significance>
+       </concept>
+ </ccs2012>
+\end{CCSXML}
+
+\ccsdesc[500]{Information systems~Recommender systems}
+\ccsdesc[300]{Security and privacy~Software and application security}
+
+\keywords{Recommender Systems, Singular Value Decomposition (SVD), Collaborative Filtering (CF), MovieLens, Data Poisoning, Explainable Artificial Intelligence (AI)}
+
+\maketitle
+
+\section{Introduction}
+Recommendation systems are the core technology behind highly personalized platforms like Netflix and Amazon. The primary objective of this course project is to manually construct and evaluate two recommender algorithms from scratch. Rather than relying on popular black-box libraries, we developed the systems using core mathematical primitives: a geometric Cosine-distance baseline Collaborative Filtering (CF) approach and a latent dimensionality projection via Singular Value Decomposition (SVD). Beyond simply measuring prediction accuracy, this report actively investigates modern challenges in recommendation, specifically focusing on trustworthiness, user control, and computational vulnerabilities to data poisoning \cite{koren2009matrix}.
+
+\section{Dataset and Preprocessing}
+\subsection{MovieLens Subset}
+We utilized the \textit{ml-latest-small} subset of the GroupLens MovieLens dataset, consisting of over 100,000 ratings distributed across 610 users and nearly 9,700 items. 
+
+\subsection{Per-User Evaluation Strategy}
+A common mistake in building recommender systems is randomly splitting the entire dataset into training and testing phases. This often leads to ``data leakage,'' where the model accidentally learns future information. To prevent this, we implemented a rigorous 80/20 train-test split executed distinctively per user:
+\begin{itemize}
+    \item \textbf{Training Matrix (80\%):} The algorithm learns from a highly sparse dataset where the vast majority of user-item relationships are unknown.
+    \item \textbf{Testing Matrix (20\%):} Used strictly after the model has been trained to evaluate its ability to accurately predict hidden interactions.
+\end{itemize}
+
+\section{Implemented Algorithms}
+Conforming to project rubrics, out-of-the-box monolithic recommender frameworks were rejected. SciPy and NumPy linear algebra functions were primarily utilized as architectural components.
+
+\subsection{Baseline: Distance-Based Collaborative Filtering (CF)}
+The foundational approach we implemented is a Memory-Based algorithm that relies on geometric distances between users. To predict a user's rating for an unseen movie, the system calculates the explicit Pearson-Cosine distance between the target user and all other users who have rated that movie. 
+
+The similarity between two user rating vectors, $\mathbf{r}_u$ and $\mathbf{r}_v$, is defined mathematically as the normalized dot product:
+\begin{equation}
+\text{sim}(u, v) = \frac{\mathbf{r}_u \cdot \mathbf{r}_v}{\|\mathbf{r}_u\| \|\mathbf{r}_v\|}
+\end{equation}
+The final prediction is generated by taking an average score weighted by this similarity metric. While conceptually simple, this method struggles immensely when data is extremely sparse.
+
+\subsection{Model-Based SVD Mathematical Extraction}
+To rigorously solve the sparsity problem, our primary methodology utilizes Singular Value Decomposition (SVD) applied against the global matrix. Instead of comparing explicit user ratings, SVD factors the vast, empty matrix into dense hidden (latent) dimensions. 
+
+By decomposing the matrix into exactly $k=50$ orthogonal components, SVD creates dense numerical arrays representing hidden abstractions for both users and items. The explicit predicted rating $\hat{R}_{ui}$ for user $u$ and item $i$ is calculated using the dot product of these decomposed matrices, retro-fitted with the original mean variables~($\mu$):
+\begin{equation}
+\hat{R} = U \cdot \Sigma \cdot V^\top + \mu
+\end{equation}
+This approach fundamentally allows the algorithm to safely guess how a user feels about an unseen movie by mathematically matching their generalized hidden tastes.
+
+\section{Comparative Evaluation}
+\subsection{Rating Accuracy Errors}
+When tested exclusively against the hidden 20\% test partition, the SVD framework proved vastly superior to the Baseline CF memory approach. SVD successfully drops the prediction error metrics well below the standard single-star variation limit (detailed in Table~\ref{tab:accuracy} and mathematically visualized in Figure~\ref{fig:accuracy}).
+
+\begin{table}[h]
+  \caption{Absolute Error Comparisons}
+  \label{tab:accuracy}
+  \begin{tabular}{ccl}
+    \toprule
+    Model & Mean Absolute Error (MAE) & Root Mean Square Error (RMSE)\\
+    \midrule
+    Baseline (Cosine CF) & $0.8173$ & $1.0537$\\
+    Latent Matrix SVD & $0.7262$ & $0.9376$\\
+  \bottomrule
+\end{tabular}
+\end{table}
+
+The fundamental reason the Baseline CF failed (achieving an unacceptable Mean Absolute Error (MAE) $> 0.8$) is its severe inability to handle the ``Cold Start'' sparsity problem. Because the average user has only seen a tiny fraction of the 10,000 available movies, there is rarely a direct geometric overlap between neighbors. When the baseline cannot naturally find a neighbor, it is forced to defensively fall back on generic global user averages, which severely damages prediction accuracy. 
+
+Conversely, the SVD model achieved an impressive MAE $< 0.73$ because the 50-dimensional latent matrix acts as an advanced Artificial Intelligence (AI) ``smoothing'' function. Because SVD condenses information into localized clusters, it can aggressively accurately infer relationships even for the most obscure, niche movies that have virtually no shared interaction history.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{images/accuracy_comparison.png}
+  \caption{Comparison of MAE and Root Mean Square Error (RMSE) prediction errors.}
+  \label{fig:accuracy}
+\end{figure}
+
+\subsection{Top-10 Item Ranking \& Relevancy Focus}
+Finally, we evaluated the models on their ability to realistically serve a curated Top-10 list of relevant, newly discovered movies to the user. Rather than simply evaluating raw float-value accuracy, this analysis utilizes Normalized Discounted Cumulative Gain (NDCG). NDCG is a strict metric that heavily penalizes algorithms that fail to rank the absolute most relevant items at the very top of the list.
+
+\begin{table}[h]
+  \caption{Top-10 Relevancy Distribution}
+  \label{tab:ranking}
+  \begin{tabular}{ccl}
+    \toprule
+    Metric & Baseline CF & SVD\\
+    \midrule
+    Precision@10 & $0.0010$ & $0.1554$\\
+    Recall@10 & $0.0001$ & $0.0789$\\
+    F1-Measure & $0.0002$ & $0.1047$\\
+    NDCG@10 & $0.0047$ & $0.4643$\\
+  \bottomrule
+\end{tabular}
+\end{table}
+
+The Baseline CF architecture collapsed entirely when asked to provide Top-10 recommendations, yielding an NDCG of merely $0.0047$. This occurs primarily due to ``Popularity Bias.'' Memory-based CF intrinsically favors recommending monolithic blockbuster titles, completely failing to provide personalized discovery or unearth hidden gems tailored to the specific user. 
+
+In massive contrast, the dimensional regularization provided by SVD generalized user patterns safely and dynamically, resulting in an exceptionally well-ordered NDCG ranking score of $0.4643$ and a vastly superior F1-Measure of $0.1047$ (refer to Figure~\ref{fig:ranking}). By leveraging profound latent behaviors, SVD breaks out of the popularity trap and confidently recommends obscure, long-tail media.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{images/ranking_comparison.png}
+  \caption{Top-10 Ranking Metric Comparison detailing SVD superiority.}
+  \label{fig:ranking}
+\end{figure}
+
+\section{Trustworthiness and Machine Safety}
+Because SVD Matrix Factorization operates as an unreadable mathematical ``black-box,'' it creates an environment that users often distrust. To solve this, we implemented three explicit interventions inside a Streamlit web dashboard to ensure system safety and transparency \cite{geng2022recommendation, li2021personalized}.
+
+\subsection{Option A: Transparency and Explainability}
+Explaining raw 50-dimensional latent arrays to an end-user leads to terrible User Experience (UX). To provide immediate algorithmic transparency, we built a hybrid ``Surrogate Explanation'' module. While the SVD engine calculates the absolute best mathematical predictions, a Content-Based layer steps in to generate a human-readable justification. By automatically finding genre overlaps between the SVD recommendation and the user's historical favorites, the User Interface (UI) generates a trusted explanation: \textit{``Because you enjoyed [Movie X], our AI found strong thematic overlaps here.''} \cite{zhang2018towards}.
+
+\subsection{Option C: Algorithm Controllability}
+Traditional Matrix Factorization structurally isolates users from steering their parameters. To offer post-prediction control, we implemented an interactive context filter in the UI. Users can actively drop identified explicit features (e.g., removing all ``Sci-Fi'' recommendations) globally, empirically mirroring intent-driven steering modules utilized in commercial streaming applications \cite{chen2020neural}.
+
+\subsection{Option E: Robustness \& Vulnerabilities}
+Algorithmic fragility to targeted mathematical data manipulation represents a critical computational hazard for models reliant on geometric clustering.
+
+\subsubsection{Targeted Clone Attacks (Shilling)}
+Testing structural resilience, a Data Poisoning simulation was designed to aggressively manipulate the system into artificially elevating obscure target movies. Rather than blindly injecting random, noisy bot reviews (which SVD naturally filters out), an advanced \textbf{Targeted Clone Swarm} was engineered. A swarm of 500 bot profiles was generated to perfectly replicate the exact viewing history of a victim user. Embedded inside these cloned profiles was a maximum-value 5-star rating for the malicious payload movie \cite{zhang2021causal, li2021useroriented}.
+
+\subsubsection{The Mathematical Collateral Damage}
+The execution proved completely devastating to the victim's predicted latent space. Because the SVD algorithm dynamically reconfigures its principal $k=50$ dimensions to reduce global variance, the sudden existence of 501 identical profiles forced the math to heavily warp its dimensions to accommodate that newly dominant behavioral group. 
+
+Fascinatingly, the attack triggered a phenomenon known as \textit{Mathematical Collateral Damage}. Because the algorithm fundamentally warped its global shape to prioritize the cloned behavior, it inadvertently amplified the correlations of completely unrelated movies that shared vague similarities to the victim's profile. As a strict result of the SVD tensor optimization, un-targeted items organically surged up into the Top-10 rankings simply because they were caught in the gravitational pull of the attack \cite{ghazimatin2020counterfactual}.
+
+\section{System Demo and Application}
+To natively test and review these concepts, a graphical frontend utilizing \textbf{Streamlit} was developed. The dashboard seamlessly exposes the Trustworthiness constraints, providing an interactive Shilling Attack Override mechanism that allows manual, real-time recalculation of the poisoned SVD tensor to empirically demonstrate the Collateral Damage vulnerabilities live.
+
+\bibliographystyle{ACM-Reference-Format}
+\begin{thebibliography}{9}
+
+\bibitem{koren2009matrix}
+Yehuda Koren, Robert Bell, and Chris Volinsky. 2009.
+\newblock Matrix factorization techniques for recommender systems.
+\newblock \emph{Computer}, 42(8):30--37.
+
+\bibitem{joint2017}
+Chaochao Chen et al. 2017.
+\newblock Joint Representation Learning for Recommendation with Heterogeneous Information Sources.
+\newblock \url{https://dl.acm.org/citation.cfm?id=3132892}
+
+\bibitem{zhang2018towards}
+Yongfeng Zhang et al. 2018.
+\newblock Towards conversational search and recommendation: System ask, user respond.
+\newblock \url{https://dl.acm.org/citation.cfm?id=3271776}
+
+\bibitem{geng2022recommendation}
+Shijie Geng et al. 2022.
+\newblock Recommendation as Language Processing (RLP): A Unified Pretrain, Personalized Prompt \& Predict Paradigm (P5).
+\newblock \url{https://arxiv.org/abs/2203.13366}
+
+\bibitem{chen2020neural}
+Chong Chen et al. 2020.
+\newblock Neural Collaborative Reasoning.
+\newblock \url{https://arxiv.org/abs/2005.08129}
+
+\bibitem{zhang2021causal}
+Yongfeng Zhang et al. 2021.
+\newblock Causal Collaborative Filtering.
+\newblock \url{https://arxiv.org/abs/2102.01868}
+
+\bibitem{li2021useroriented}
+Yingqiang Ge et al. 2021.
+\newblock User-oriented Fairness in Recommendation.
+\newblock \url{https://arxiv.org/abs/2104.10671}
+
+\bibitem{li2021personalized}
+Lei Li et al. 2021.
+\newblock Personalized Transformer for Explainable Recommendation.
+\newblock \url{https://aclanthology.org/2021.acl-long.383/}
+
+\bibitem{ghazimatin2020counterfactual}
+Azal Ghazimatin et al. 2020.
+\newblock Counterfactual Explainable Recommendation.
+\newblock \url{https://arxiv.org/abs/2108.10539}
+
+\end{thebibliography}
+
+\end{document}

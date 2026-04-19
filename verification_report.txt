@@ -1,0 +1,49 @@
+=========================================================
+      RECOMMENDER SYSTEM METRICS VERIFICATION REPORT     
+=========================================================
+
+1. GLOBAL ERROR METRICS (Tested on 20% Holdout Data)
+-------------------------------------------------------
+Total Test Samples: 20417 user-item pairs
+Mean Absolute Error (MAE): 0.8010 stars
+Root Mean Square Error (RMSE): 1.0660 stars
+
+2. LINE-BY-LINE SAMPLE VERIFICATION (Actual vs Predicted)
+-------------------------------------------------------
+Below is a random sample of 3 users from the test set.
+You can verify how close the model's prediction is to ground truth.
+
+--- User ID: 283 ---
+| Movie ID | Actual Rating | Predicted Rating | Absolute Error |
+|----------|---------------|------------------|----------------|
+| 1517.0   | 4.0           | 3.27             | 0.73           |
+| 587.0    | 2.0           | 3.03             | 1.03           |
+| 1393.0   | 3.0           | 3.19             | 0.19           |
+| 1148.0   | 2.0           | 2.87             | 0.87           |
+| 608.0    | 4.0           | 2.10             | 1.90           |
+
+--- User ID: 85 ---
+| Movie ID | Actual Rating | Predicted Rating | Absolute Error |
+|----------|---------------|------------------|----------------|
+| 1449.0   | 4.0           | 3.32             | 0.68           |
+| 1596.0   | 4.0           | 3.43             | 0.57           |
+| 1694.0   | 4.0           | 3.01             | 0.99           |
+| 1693.0   | 4.0           | 2.56             | 1.44           |
+| 1207.0   | 5.0           | 4.12             | 0.88           |
+
+--- User ID: 484 ---
+| Movie ID | Actual Rating | Predicted Rating | Absolute Error |
+|----------|---------------|------------------|----------------|
+| 594.0    | 5.0           | 3.80             | 1.20           |
+| 3697.0   | 2.0           | 3.56             | 1.56           |
+| 6868.0   | 4.0           | 3.22             | 0.78           |
+| 3253.0   | 4.0           | 3.99             | 0.01           |
+| 8917.0   | 4.0           | 3.54             | 0.46           |
+
+=========================================================
+3. MATHEMATICAL EXPLANATION OF CALCULATIONS
+-------------------------------------------------------
+=> MAE calculates:  Sum( |Actual - Predicted| ) / N
+=> RMSE calculates: Sqrt( Sum( (Actual - Predicted)^2 ) / N )
+Where N is the total number of items in the test set.
+An MAE of ~0.8 means our predictions are off by only 0.8 stars on average.

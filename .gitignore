@@ -1,0 +1,15 @@
+# Datasets and Generated Assets
+ml-latest-small/
+processed/
+
+# Python Cache
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Virtual Environments
+venv/
+.env
+
+# Scratch and Temporary Logs
+scratch/
