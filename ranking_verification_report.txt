@@ -5,75 +5,75 @@
 This report details how Precision@10, Recall@10, F-Measure, and NDCG@10
 are calculated explicitly for 3 sample users.
 
---- USER ID: 600 ---
-Total Movies in User's Hidden Test Set: 153
-Total 'Hits' in Top-10: 3
-
-User Metrics Calculation:
-  Precision@10 = Hits / 10 = 3 / 10 = 0.30
-  Recall@10    = Hits / TestSetSize = 3 / 153 = 0.0196
-  F-Measure    = 2 * (P * R) / (P + R) = 0.0368
-  NDCG@10      = 0.8855
-
-Top 10 Recommendations Generated:
-| Rank | Movie ID | Score | Hit? | Movie Title 
-|------|----------|-------|------|------------------------------
-| 1    | 353      | 5.56  | YES  | Crow, The (1994)
-| 2    | 441      | 5.22  | NO   | Dazed and Confused (1993)
-| 3    | 266      | 5.16  | YES  | Legends of the Fall (1994)
-| 4    | 57669    | 5.05  | NO   | In Bruges (2008)
-| 5    | 4226     | 4.87  | YES  | Memento (2000)
-| 6    | 1215     | 4.83  | NO   | Army of Darkness (1993)
-| 7    | 3213     | 4.72  | NO   | Batman: Mask of the Phantasm (1993)
-| 8    | 51255    | 4.70  | NO   | Hot Fuzz (2007)
-| 9    | 97913    | 4.68  | NO   | Wreck-It Ralph (2012)
-| 10   | 903      | 4.66  | NO   | Vertigo (1958)
-
---- USER ID: 528 ---
-Total Movies in User's Hidden Test Set: 15
-Total 'Hits' in Top-10: 1
-
-User Metrics Calculation:
-  Precision@10 = Hits / 10 = 1 / 10 = 0.10
-  Recall@10    = Hits / TestSetSize = 1 / 15 = 0.0667
-  F-Measure    = 2 * (P * R) / (P + R) = 0.0800
-  NDCG@10      = 0.2891
-
-Top 10 Recommendations Generated:
-| Rank | Movie ID | Score | Hit? | Movie Title 
-|------|----------|-------|------|------------------------------
-| 1    | 2194     | 5.11  | NO   | Untouchables, The (1987)
-| 2    | 115713   | 5.09  | NO   | Ex Machina (2015)
-| 3    | 733      | 5.00  | NO   | Rock, The (1996)
-| 4    | 553      | 4.87  | NO   | Tombstone (1993)
-| 5    | 1258     | 4.87  | NO   | Shining, The (1980)
-| 6    | 3060     | 4.84  | NO   | Commitments, The (1991)
-| 7    | 260      | 4.81  | NO   | Star Wars: Episode IV - A New Hope (1977)
-| 8    | 1303     | 4.80  | NO   | Man Who Would Be King, The (1975)
-| 9    | 79132    | 4.75  | NO   | Inception (2010)
-| 10   | 356      | 4.72  | YES  | Forrest Gump (1994)
-
---- USER ID: 65 ---
-Total Movies in User's Hidden Test Set: 7
+--- USER ID: 483 ---
+Total Movies in User's Hidden Test Set: 146
 Total 'Hits' in Top-10: 0
 
 User Metrics Calculation:
   Precision@10 = Hits / 10 = 0 / 10 = 0.00
-  Recall@10    = Hits / TestSetSize = 0 / 7 = 0.0000
+  Recall@10    = Hits / TestSetSize = 0 / 146 = 0.0000
   F-Measure    = 2 * (P * R) / (P + R) = 0.0000
   NDCG@10      = 0.0000
 
 Top 10 Recommendations Generated:
 | Rank | Movie ID | Score | Hit? | Movie Title 
 |------|----------|-------|------|------------------------------
-| 1    | 177593   | 4.96  | NO   | Three Billboards Outside Ebbing, Missouri (2017)
-| 2    | 296      | 4.95  | NO   | Pulp Fiction (1994)
-| 3    | 51931    | 4.79  | NO   | Reign Over Me (2007)
-| 4    | 96821    | 4.65  | NO   | Perks of Being a Wallflower, The (2012)
-| 5    | 1193     | 4.63  | NO   | One Flew Over the Cuckoo's Nest (1975)
-| 6    | 174053   | 4.62  | NO   | Black Mirror: White Christmas (2014)
-| 7    | 5995     | 4.61  | NO   | Pianist, The (2002)
-| 8    | 7361     | 4.61  | NO   | Eternal Sunshine of the Spotless Mind (2004)
-| 9    | 50       | 4.58  | NO   | Usual Suspects, The (1995)
-| 10   | 4027     | 4.57  | NO   | O Brother, Where Art Thou? (2000)
+| 1    | 51931    | 5.56  | NO   | Reign Over Me (2007)
+| 2    | 40819    | 5.43  | NO   | Walk the Line (2005)
+| 3    | 74458    | 5.16  | NO   | Shutter Island (2010)
+| 4    | 71462    | 5.14  | NO   | Cove, The (2009)
+| 5    | 180095   | 5.14  | NO   | Wonder (2017)
+| 6    | 177593   | 5.14  | NO   | Three Billboards Outside Ebbing, Missouri (2017)
+| 7    | 38038    | 5.09  | NO   | Wallace & Gromit in The Curse of the Were-Rabbit (2005)
+| 8    | 5617     | 5.04  | NO   | Secretary (2002)
+| 9    | 139385   | 5.01  | NO   | The Revenant (2015)
+| 10   | 170705   | 5.00  | NO   | Band of Brothers (2001)
+
+--- USER ID: 391 ---
+Total Movies in User's Hidden Test Set: 78
+Total 'Hits' in Top-10: 1
+
+User Metrics Calculation:
+  Precision@10 = Hits / 10 = 1 / 10 = 0.10
+  Recall@10    = Hits / TestSetSize = 1 / 78 = 0.0128
+  F-Measure    = 2 * (P * R) / (P + R) = 0.0227
+  NDCG@10      = 0.6309
+
+Top 10 Recommendations Generated:
+| Rank | Movie ID | Score | Hit? | Movie Title 
+|------|----------|-------|------|------------------------------
+| 1    | 2186     | 5.69  | NO   | Strangers on a Train (1951)
+| 2    | 910      | 5.65  | YES  | Some Like It Hot (1959)
+| 3    | 89904    | 5.58  | NO   | The Artist (2011)
+| 4    | 1262     | 5.55  | NO   | Great Escape, The (1963)
+| 5    | 745      | 5.48  | NO   | Wallace & Gromit: A Close Shave (1995)
+| 6    | 48394    | 5.47  | NO   | Pan's Labyrinth (Laberinto del fauno, El) (2006)
+| 7    | 1203     | 5.44  | NO   | 12 Angry Men (1957)
+| 8    | 337      | 5.38  | NO   | What's Eating Gilbert Grape (1993)
+| 9    | 81845    | 5.35  | NO   | King's Speech, The (2010)
+| 10   | 1260     | 5.29  | NO   | M (1931)
+
+--- USER ID: 194 ---
+Total Movies in User's Hidden Test Set: 4
+Total 'Hits' in Top-10: 0
+
+User Metrics Calculation:
+  Precision@10 = Hits / 10 = 0 / 10 = 0.00
+  Recall@10    = Hits / TestSetSize = 0 / 4 = 0.0000
+  F-Measure    = 2 * (P * R) / (P + R) = 0.0000
+  NDCG@10      = 0.0000
+
+Top 10 Recommendations Generated:
+| Rank | Movie ID | Score | Hit? | Movie Title 
+|------|----------|-------|------|------------------------------
+| 1    | 296      | 4.75  | NO   | Pulp Fiction (1994)
+| 2    | 318      | 4.71  | NO   | Shawshank Redemption, The (1994)
+| 3    | 1266     | 4.62  | NO   | Unforgiven (1992)
+| 4    | 260      | 4.61  | NO   | Star Wars: Episode IV - A New Hope (1977)
+| 5    | 593      | 4.56  | NO   | Silence of the Lambs, The (1991)
+| 6    | 1270     | 4.56  | NO   | Back to the Future (1985)
+| 7    | 1213     | 4.55  | NO   | Goodfellas (1990)
+| 8    | 50       | 4.53  | NO   | Usual Suspects, The (1995)
+| 9    | 2028     | 4.52  | NO   | Saving Private Ryan (1998)
+| 10   | 3060     | 4.49  | NO   | Commitments, The (1991)
 
