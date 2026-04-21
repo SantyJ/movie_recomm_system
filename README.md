@@ -9,11 +9,11 @@
 
 ## Project Overview
 
-This repository contains the complete implementation of **Option 1: Recommender System**. Rather than relying on rigid statistical packages, we developed a Recommender System from scratch utilizing Deep Learning Matrix Factorization (PyTorch Neural Embeddings) and a Memory-Based Baseline to predict abstract user-item alignments.
+This repository contains the complete implementation of **Option 1: Recommender System**. Rather than relying on popular monolithic black-box libraries, we developed a Recommender System from scratch using mathematical linear algebra primitives to predict user-item ratings and generate Top-10 recommendation lists.
 
-Beyond establishing neural accuracy architectures, this project directly addresses modern constraints in algorithmic safety, explicitly implementing two **Trustworthiness** bonus rubrics:
-1. **Explainability (Option A):** Generating human-readable rationale via a Content-Based Surrogate module applied on top of the deep neural tensors.
-2. **Controllability (Option C):** Providing interactive UI mechanisms allowing users to drop specific parameters natively post-prediction.
+Beyond establishing mathematical accuracy, this project directly addresses modern constraints in structural algorithmic safety, explicitly implementing the two **Trustworthiness** bonus rubrics:
+1. **Explainability (Option A):** Generating human-readable rationale via a Content-Based Surrogate module.
+2. **Controllability (Option C):** Providing interactive mechanisms allowing users to drop specific parameters post-prediction.
 
 ---
 
@@ -23,14 +23,13 @@ Beyond establishing neural accuracy architectures, this project directly address
 recomm_system/
 │
 ├── data_prep.py                # 1. Pipeline for 80/20 train-test splitting (Prevents Data Leakage)
-├── baseline_cf.py              # 2. Algorithm 1: Memory-Based Cosine Similarity CF (Baseline)
-├── model.py                    # 3. Algorithm 2: Deep PyTorch Neural Matrix Factorization
 │
-├── verify_metrics.py           # Evaluation script for MAE and RMSE prediction errors
-├── verify_ranking_metrics.py   # Evaluation script for Precision, Recall, F1, and NDCG
+├── baseline_cf.py              # 2. Algorithm 1: Memory-Based Cosine Similarity CF (Baseline)
+├── my_svd_approach.py          # 3. Algorithm 2: Model-Based Singular Value Decomposition (SVD)
+│
 ├── generate_plots.py           # Automates visualization of comparison metrics
 │
-├── app.py                      # Interactive Streamlit Demo (Visualizes Neural inference)
+├── app.py                      # Interactive Streamlit Demo (Visualizes the Trustworthiness modules)
 │
 ├── project_report.tex          # Formatted ACM Academic LaTeX Report detailing logic/theory
 └── README.md                   # Project documentation
@@ -49,9 +48,9 @@ Ensure you have Python `3.9+` installed on your machine.
    ```
 
 2. **Install Required Libraries:**
-   The project primarily utilizes deep learning PyTorch bindings and Streamlit for the front-end demo.
+   The project primarily utilizes deep linear-algebra packages and Streamlit for the front-end demo.
    ```bash
-   pip install pandas numpy scipy scikit-learn matplotlib streamlit torch
+   pip install pandas numpy scipy scikit-learn matplotlib streamlit
    ```
 
 3. **Data Availability:**
@@ -71,16 +70,15 @@ python run_project.py
 
 This single command will sequentially execute:
 1. **Data Preprocessing:** Splitting the dataset uniquely per-user (80/20) and securely holding out ground-truths to prevent data leakage.
-2. **Model Training:** Initializing the PyTorch Optimizer and calculating 15 Epochs of Gradient Descent to map embeddings.
-3. **Metric Verification:** Firing Neural inferences and Baseline arrays to assert MAE and RMSE floating-point accuracy errors.
-4. **Ranking Verification:** Strictly validating recommendation ordering using NDCG, Recall, and F1 limits.
-5. **Graphing Automation:** Regenerating the comparative visualization charts locally based exclusively on the current model run outputs.
+2. **Metric Verification (Baseline):** Firing Cosine vectors to assert MAE and NDCG.
+3. **Metric Verification (SVD):** Strictly validating SVD recommendation ordering using NDCG, Recall, and F1 limits.
+4. **Graphing Automation:** Regenerating the comparative visualization charts locally based exclusively on the model outputs.
 
 ---
 
 ## The Trustworthiness Demo (Streamlit Interface)
 
-The highlight of the project is the interactive UI which proves our findings for the Extra Credit Trustworthiness rubrics (Explainability and Controllability).
+The highlight of the project is the interactive UI which proves our findings for the Trustworthiness rubrics.
 
 To launch the dashboard, execute:
 ```bash
@@ -88,5 +86,5 @@ streamlit run app.py
 ```
 
 ### Dashboard Features
-* **Option A (Transparency):** Watch the AI generate dynamic, human-readable explanations justifying **why** the underlying Deep Neural Network chose specific recommendations based on genre-DNA mapping against the user's high-rated history.
-* **Option C (Controllability):** Interact with the "Filter Global Recommendations" sidebar to immediately strip specific domains (e.g., "Horror") dynamically from your neural matrix results in real-time.
+* **Option A (Transparency):** Watch the AI generate dynamic, human-readable explanations justifying **why** the underlying math chose specific recommendations based on genre-DNA mapping against the user's high-rated history.
+* **Option C (Controllability):** Interact with the "Filter Global Recommendations" sidebar to immediately strip specific domains (e.g., "Horror") dynamically from your SVD matrix results in real-time.

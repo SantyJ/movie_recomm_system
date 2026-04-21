@@ -25,7 +25,7 @@ def main():
     print("   CS 550: Massive Data Mining - Project Execution Suite ")
     print("=========================================================")
     print("This wrapper will sequentially execute the entire project")
-    print("pipeline: Data Prep -> MAE/RMSE Metrics -> NDCG Ranking -> Plots")
+    print("pipeline: Data Prep -> Baseline CF -> SVD Approach -> Plots")
     print("=========================================================\n")
     
     if not os.path.exists('ml-latest-small/movies.csv'):
@@ -37,25 +37,22 @@ def main():
     time.sleep(2)
     
     # 1. Data Prep
-    run_script('data_prep.py', 'Step 1/5: Preprocessing Data (80/20 per-user split)')
+    run_script('data_prep.py', 'Step 1/4: Preprocessing Data (80/20 per-user split)')
     
-    # 2. Train Neural Network
-    run_script('model.py', 'Step 2/5: Training PyTorch Neural Matrix Factorization (15 Epochs)')
+    # 2. Baseline
+    run_script('baseline_cf.py', 'Step 2/4: Calculating Baseline CF (MAE & NDCG)')
     
-    # 3. Rating Metrics
-    run_script('verify_metrics.py', 'Step 3/5: Calculating MAE & RMSE Prediction Errors')
+    # 3. SVD
+    run_script('my_svd_approach.py', 'Step 3/4: Calculating SVD Matrix Factorization (MAE & NDCG)')
     
-    # 4. Ranking Metrics
-    run_script('verify_ranking_metrics.py', 'Step 4/5: Calculating Precision, Recall, and NDCG Ranking')
-    
-    # 5. Generate Plots
-    run_script('generate_plots.py', 'Step 5/5: Generating Visualization Artifacts')
+    # 4. Generate Plots
+    run_script('generate_plots.py', 'Step 4/4: Generating Visualization Artifacts')
     
     print("=========================================================")
     print("      PIPELINE EXECUTION SUCCESSFULLY COMPLETED!")
     print("=========================================================")
     print("\nNext Steps:")
-    print("To launch the interactive Trustworthiness Dashboard (Option A, C, E),")
+    print("To launch the interactive Trustworthiness Dashboard (Option A & C),")
     print("please run the following command in your terminal:")
     print("\n   streamlit run app.py\n")
 

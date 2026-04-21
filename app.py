@@ -3,9 +3,8 @@ import os
 import pandas as pd
 import numpy as np
 import joblib
-import torch
+from scipy.sparse.linalg import svds
 import random
-from model import MatrixFactorization
 
 # Custom CSS for aesthetics
 st.set_page_config(page_title="AI Recommender Demo", layout="wide")
@@ -46,23 +45,30 @@ def load_data():
     ml_small_dir = os.path.join(project_dir, 'ml-latest-small')
     
     user_encoder = joblib.load(os.path.join(processed_dir, 'user_encoder.pkl'))
-    item_encoder = joblib.load(os.path.join(processed_dir, 'item_encoder.pkl'))
     
     movies_df = pd.read_csv(os.path.join(ml_small_dir, 'movies.csv'))
     train_ratings = pd.read_csv(os.path.join(processed_dir, 'train_ratings.csv'))
         
-    return train_ratings, movies_df, user_encoder, item_encoder
+    return train_ratings, movies_df, user_encoder
 
-@st.cache_resource
-def load_model(num_users, num_items):
-    project_dir = os.path.dirname(os.path.abspath(__file__))
-    model_path = os.path.join(project_dir, 'processed', 'mf_model.pth')
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = MatrixFactorization(num_users, num_items, embedding_dim=64)
-    model.load_state_dict(torch.load(model_path, map_location=device, weights_only=True))
-    model.to(device)
-    model.eval()
-    return model, device
+@st.cache_data(show_spinner=False)
+def compute_svd(ratings_df):
+    df_copy = ratings_df.copy()
+    
+    R_df = df_copy.pivot(index='userId', columns='movieId', values='rating')
+    users = R_df.index.tolist()
+    movies = R_df.columns.tolist()
+
+    user_ratings_mean = R_df.mean(axis=1).values
+    R_demeaned = R_df.sub(user_ratings_mean, axis=0).fillna(0).values
+
+    U, sigma, Vt = svds(R_demeaned, k=50)
+    sigma = np.diag(sigma)
+
+    all_user_predicted_ratings = np.dot(np.dot(U, sigma), Vt) + user_ratings_mean.reshape(-1, 1)
+    preds_df = pd.DataFrame(all_user_predicted_ratings, index=users, columns=movies)
+    return preds_df
+
 
 def generate_explanation(user_history, rec_movie_id, movies_df):
     rec_movie_row = movies_df[movies_df['movieId'] == rec_movie_id]
@@ -96,17 +102,15 @@ def generate_explanation(user_history, rec_movie_id, movies_df):
         ]
         return random.choice(templates)
     else:
-        return "Our Neural Model found deeply embedded collaborative similarities with your profile!"
+        return "Our Model-Based SVD AI found latent collaborative similarities with your profile!"
 
 # Load core data
-with st.spinner("Initializing Database and Neural Network Weights..."):
-    train_ratings, movies_df, user_encoder, item_encoder = load_data()
-    num_users = len(user_encoder.classes_)
-    num_items = len(item_encoder.classes_)
-    model, device = load_model(num_users, num_items)
+with st.spinner("Initializing Database..."):
+    train_ratings, movies_df, user_encoder = load_data()
+
 
 st.title("🎬 Movie Recommender AI System")
-st.markdown("CS 550 Project Demo - Deep Learning Matrix Factorization & Trustworthiness")
+st.markdown("CS 550 Project Demo - SVD Matrix Factorization & Trustworthiness")
 
 # ---------------------------------------------
 # TRUSTWORTHINESS MODULES (SIDEBAR)
@@ -124,9 +128,7 @@ excluded_genres = st.sidebar.multiselect("Exclude Genres:", all_genres)
 # MAIN UI
 # ---------------------------------------------
 valid_users = train_ratings['userId'].unique().tolist()
-# Filter users who exist in the encoder
-valid_users_encoded = [u for u in valid_users if str(u) in [str(x) for x in user_encoder.classes_]]
-all_users = sorted(valid_users_encoded)
+all_users = sorted(valid_users)
 selected_user = st.selectbox("👤 Select a User ID to view personalized recommendations:", all_users)
 
 if selected_user:
@@ -142,13 +144,18 @@ if selected_user:
             st.markdown(f"⭐ **{row['rating']}** | {row['title']} *( {row['genres']} )*")
             
     with col2:
-        st.subheader("✨ Neural Personalized Rankings (Top 10)")
+        st.subheader("✨ SVD Personalized Rankings (Top 10)")
         
-        with st.spinner("Calculating PyTorch Inference Embeddings (Live)..."):
-            # Get valid candidates
+        with st.spinner("Calculating SVD Mathematical Tensor (Live)..."):
+            preds_df = compute_svd(train_ratings)
+            
+        # Isolate User
+        if selected_user in preds_df.index:
+            user_preds = preds_df.loc[selected_user].copy()
+            
+            # Filter already watched
             watched_items = set(user_hist['movieId'].unique())
-            all_items = set(item_encoder.classes_)
-            candidate_items = list(all_items - watched_items)
+            candidate_items = list(set(preds_df.columns) - watched_items)
             
             # Apply Option C (Controllability)
             if excluded_genres:
@@ -158,22 +165,12 @@ if selected_user:
                     mask = movies_df['genres'].str.contains(gen, na=False)
                     exclude_ids.update(movies_df[mask]['movieId'].tolist())
                 candidate_items = [i for i in candidate_items if i not in exclude_ids]
-
+                
             if len(candidate_items) > 0:
-                user_idx = user_encoder.transform([selected_user])[0]
-                item_indices = item_encoder.transform(candidate_items)
+                user_preds = user_preds[candidate_items].sort_values(ascending=False).head(10)
+                top_items = user_preds.index.tolist()
                 
-                u_tensor = torch.tensor([user_idx]*len(item_indices), dtype=torch.long).to(device)
-                i_tensor = torch.tensor(item_indices, dtype=torch.long).to(device)
-                
-                with torch.no_grad():
-                    preds = model(u_tensor, i_tensor).cpu().numpy()
-                
-                # Sort descending
-                top_indices = np.argsort(preds)[::-1][:10]
-                top_item_ids = np.array(candidate_items)[top_indices]
-                
-                for item_id in top_item_ids:
+                for item_id in top_items:
                     m_row = movies_df[movies_df['movieId'] == item_id]
                     if not m_row.empty:
                         title = m_row.iloc[0]['title']
