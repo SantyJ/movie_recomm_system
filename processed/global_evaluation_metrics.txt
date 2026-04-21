@@ -1,0 +1,8 @@
+========= GLOBAL TOP-10 RECOMMENDATION METRICS =========
+These metrics are averaged across all users in the dataset.
+
+Average Precision@10 : 0.0590
+Average Recall@10    : 0.0292
+Average F1-Measure   : 0.0391
+Average NDCG@10      : 0.2161
+========================================================

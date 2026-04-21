@@ -1,6 +1,6 @@
-# Datasets and Generated Assets
-ml-latest-small/
-processed/
+# # Datasets and Generated Assets
+# ml-latest-small/
+# processed/
 
 # Python Cache
 __pycache__/
@@ -11,5 +11,5 @@ __pycache__/
 venv/
 .env
 
-# Scratch and Temporary Logs
-scratch/
+# # Scratch and Temporary Logs
+# scratch/
