@@ -37,16 +37,19 @@ def main():
     time.sleep(2)
     
     # 1. Data Prep
-    run_script('data_prep.py', 'Step 1/4: Preprocessing Data (80/20 per-user split)')
+    run_script('data_prep.py', 'Step 1/5: Preprocessing Data (80/20 per-user split)')
     
-    # 2. Rating Metrics
-    run_script('verify_metrics.py', 'Step 2/4: Calculating MAE & RMSE Prediction Errors')
+    # 2. Train Neural Network
+    run_script('model.py', 'Step 2/5: Training PyTorch Neural Matrix Factorization (15 Epochs)')
     
-    # 3. Ranking Metrics
-    run_script('verify_ranking_metrics.py', 'Step 3/4: Calculating Precision, Recall, and NDCG Ranking')
+    # 3. Rating Metrics
+    run_script('verify_metrics.py', 'Step 3/5: Calculating MAE & RMSE Prediction Errors')
     
-    # 4. Generate Plots
-    run_script('generate_plots.py', 'Step 4/4: Generating Visualization Artifacts')
+    # 4. Ranking Metrics
+    run_script('verify_ranking_metrics.py', 'Step 4/5: Calculating Precision, Recall, and NDCG Ranking')
+    
+    # 5. Generate Plots
+    run_script('generate_plots.py', 'Step 5/5: Generating Visualization Artifacts')
     
     print("=========================================================")
     print("      PIPELINE EXECUTION SUCCESSFULLY COMPLETED!")

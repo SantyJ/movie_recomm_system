@@ -5,75 +5,75 @@
 This report details how Precision@10, Recall@10, F-Measure, and NDCG@10
 are calculated explicitly for 3 sample users.
 
---- USER ID: 483 ---
-Total Movies in User's Hidden Test Set: 146
+--- USER ID: 425 ---
+Total Movies in User's Hidden Test Set: 62
 Total 'Hits' in Top-10: 0
 
 User Metrics Calculation:
   Precision@10 = Hits / 10 = 0 / 10 = 0.00
-  Recall@10    = Hits / TestSetSize = 0 / 146 = 0.0000
+  Recall@10    = Hits / TestSetSize = 0 / 62 = 0.0000
   F-Measure    = 2 * (P * R) / (P + R) = 0.0000
   NDCG@10      = 0.0000
 
 Top 10 Recommendations Generated:
 | Rank | Movie ID | Score | Hit? | Movie Title 
 |------|----------|-------|------|------------------------------
-| 1    | 51931    | 5.56  | NO   | Reign Over Me (2007)
-| 2    | 40819    | 5.43  | NO   | Walk the Line (2005)
-| 3    | 74458    | 5.16  | NO   | Shutter Island (2010)
-| 4    | 71462    | 5.14  | NO   | Cove, The (2009)
-| 5    | 180095   | 5.14  | NO   | Wonder (2017)
-| 6    | 177593   | 5.14  | NO   | Three Billboards Outside Ebbing, Missouri (2017)
-| 7    | 38038    | 5.09  | NO   | Wallace & Gromit in The Curse of the Were-Rabbit (2005)
-| 8    | 5617     | 5.04  | NO   | Secretary (2002)
-| 9    | 139385   | 5.01  | NO   | The Revenant (2015)
-| 10   | 170705   | 5.00  | NO   | Band of Brothers (2001)
+| 1    | 141718   | 4.82  | NO   | Deathgasm (2015)
+| 2    | 5026     | 4.60  | NO   | Brotherhood of the Wolf (Pacte des loups, Le) (2001)
+| 3    | 5690     | 4.53  | NO   | Grave of the Fireflies (Hotaru no haka) (1988)
+| 4    | 3567     | 4.52  | NO   | Bossa Nova (2000)
+| 5    | 2542     | 4.52  | NO   | Lock, Stock & Two Smoking Barrels (1998)
+| 6    | 2324     | 4.49  | NO   | Life Is Beautiful (La Vita è bella) (1997)
+| 7    | 16       | 4.47  | NO   | Casino (1995)
+| 8    | 553      | 4.47  | NO   | Tombstone (1993)
+| 9    | 3967     | 4.46  | NO   | Billy Elliot (2000)
+| 10   | 8132     | 4.44  | NO   | Gladiator (1992)
 
---- USER ID: 391 ---
-Total Movies in User's Hidden Test Set: 78
-Total 'Hits' in Top-10: 1
-
-User Metrics Calculation:
-  Precision@10 = Hits / 10 = 1 / 10 = 0.10
-  Recall@10    = Hits / TestSetSize = 1 / 78 = 0.0128
-  F-Measure    = 2 * (P * R) / (P + R) = 0.0227
-  NDCG@10      = 0.6309
-
-Top 10 Recommendations Generated:
-| Rank | Movie ID | Score | Hit? | Movie Title 
-|------|----------|-------|------|------------------------------
-| 1    | 2186     | 5.69  | NO   | Strangers on a Train (1951)
-| 2    | 910      | 5.65  | YES  | Some Like It Hot (1959)
-| 3    | 89904    | 5.58  | NO   | The Artist (2011)
-| 4    | 1262     | 5.55  | NO   | Great Escape, The (1963)
-| 5    | 745      | 5.48  | NO   | Wallace & Gromit: A Close Shave (1995)
-| 6    | 48394    | 5.47  | NO   | Pan's Labyrinth (Laberinto del fauno, El) (2006)
-| 7    | 1203     | 5.44  | NO   | 12 Angry Men (1957)
-| 8    | 337      | 5.38  | NO   | What's Eating Gilbert Grape (1993)
-| 9    | 81845    | 5.35  | NO   | King's Speech, The (2010)
-| 10   | 1260     | 5.29  | NO   | M (1931)
-
---- USER ID: 194 ---
-Total Movies in User's Hidden Test Set: 4
+--- USER ID: 459 ---
+Total Movies in User's Hidden Test Set: 6
 Total 'Hits' in Top-10: 0
 
 User Metrics Calculation:
   Precision@10 = Hits / 10 = 0 / 10 = 0.00
-  Recall@10    = Hits / TestSetSize = 0 / 4 = 0.0000
+  Recall@10    = Hits / TestSetSize = 0 / 6 = 0.0000
   F-Measure    = 2 * (P * R) / (P + R) = 0.0000
   NDCG@10      = 0.0000
 
 Top 10 Recommendations Generated:
 | Rank | Movie ID | Score | Hit? | Movie Title 
 |------|----------|-------|------|------------------------------
-| 1    | 296      | 4.75  | NO   | Pulp Fiction (1994)
-| 2    | 318      | 4.71  | NO   | Shawshank Redemption, The (1994)
-| 3    | 1266     | 4.62  | NO   | Unforgiven (1992)
-| 4    | 260      | 4.61  | NO   | Star Wars: Episode IV - A New Hope (1977)
-| 5    | 593      | 4.56  | NO   | Silence of the Lambs, The (1991)
-| 6    | 1270     | 4.56  | NO   | Back to the Future (1985)
-| 7    | 1213     | 4.55  | NO   | Goodfellas (1990)
-| 8    | 50       | 4.53  | NO   | Usual Suspects, The (1995)
-| 9    | 2028     | 4.52  | NO   | Saving Private Ryan (1998)
-| 10   | 3060     | 4.49  | NO   | Commitments, The (1991)
+| 1    | 141718   | 5.42  | NO   | Deathgasm (2015)
+| 2    | 174053   | 5.33  | NO   | Black Mirror: White Christmas (2014)
+| 3    | 7323     | 5.24  | NO   | Good bye, Lenin! (2003)
+| 4    | 177593   | 5.19  | NO   | Three Billboards Outside Ebbing, Missouri (2017)
+| 5    | 4967     | 5.16  | NO   | No Man's Land (2001)
+| 6    | 2542     | 5.15  | NO   | Lock, Stock & Two Smoking Barrels (1998)
+| 7    | 71899    | 5.11  | NO   | Mary and Max (2009)
+| 8    | 1096     | 5.10  | NO   | Sophie's Choice (1982)
+| 9    | 4441     | 5.10  | NO   | Game of Death (1978)
+| 10   | 1266     | 5.08  | NO   | Unforgiven (1992)
+
+--- USER ID: 487 ---
+Total Movies in User's Hidden Test Set: 12
+Total 'Hits' in Top-10: 0
+
+User Metrics Calculation:
+  Precision@10 = Hits / 10 = 0 / 10 = 0.00
+  Recall@10    = Hits / TestSetSize = 0 / 12 = 0.0000
+  F-Measure    = 2 * (P * R) / (P + R) = 0.0000
+  NDCG@10      = 0.0000
+
+Top 10 Recommendations Generated:
+| Rank | Movie ID | Score | Hit? | Movie Title 
+|------|----------|-------|------|------------------------------
+| 1    | 38038    | 4.23  | NO   | Wallace & Gromit in The Curse of the Were-Rabbit (2005)
+| 2    | 177593   | 4.12  | NO   | Three Billboards Outside Ebbing, Missouri (2017)
+| 3    | 48394    | 4.02  | NO   | Pan's Labyrinth (Laberinto del fauno, El) (2006)
+| 4    | 2324     | 4.00  | NO   | Life Is Beautiful (La Vita è bella) (1997)
+| 5    | 5816     | 3.99  | NO   | Harry Potter and the Chamber of Secrets (2002)
+| 6    | 296      | 3.98  | NO   | Pulp Fiction (1994)
+| 7    | 174053   | 3.96  | NO   | Black Mirror: White Christmas (2014)
+| 8    | 8368     | 3.92  | NO   | Harry Potter and the Prisoner of Azkaban (2004)
+| 9    | 56782    | 3.91  | NO   | There Will Be Blood (2007)
+| 10   | 58559    | 3.89  | NO   | Dark Knight, The (2008)
 
