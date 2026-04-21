@@ -1,2 +1,4 @@
 Run in this order
 data_prep.py -> baseline_cf.py -> model.py -> Everything else
+
+Please download the small movie dataset and put it in the main folder.
