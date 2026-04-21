@@ -1,0 +1,2 @@
+Run in this order
+data_prep.py -> baseline_cf.py -> model.py -> Everything else

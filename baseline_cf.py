@@ -6,7 +6,7 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error
 from tqdm import tqdm
 
 def dcg_at_k(r, k):
-    r = np.asfarray(r)[:k]
+    r = np.asarray(r)[:k]
     if r.size:
         return np.sum(r / np.log2(np.arange(2, r.size + 2)))
     return 0.
