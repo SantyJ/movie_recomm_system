@@ -52,7 +52,7 @@ def main():
     print("      PIPELINE EXECUTION SUCCESSFULLY COMPLETED!")
     print("=========================================================")
     print("\nNext Steps:")
-    print("To launch the interactive Trustworthiness Dashboard (Option A & C),")
+    print("To launch the interactive Trustworthiness Dashboard (Option A, C, & E),")
     print("please run the following command in your terminal:")
     print("\n   streamlit run app.py\n")
 

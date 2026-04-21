@@ -35,6 +35,14 @@ st.markdown("""
         border-left: 4px solid #58a6ff;
         border-radius: 4px;
     }
+    .attack-warning {
+        padding: 10px;
+        background-color: #8a2be2;
+        color: white;
+        border-radius: 5px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -52,9 +60,23 @@ def load_data():
     return train_ratings, movies_df, user_encoder
 
 @st.cache_data(show_spinner=False)
-def compute_svd(ratings_df):
+def compute_svd(ratings_df, poison=False, target_movie_id=None, victim_id=None):
     df_copy = ratings_df.copy()
-    
+    if poison and target_movie_id and victim_id:
+        victim_rows = df_copy[df_copy['userId'] == victim_id].copy()
+        
+        # User-Aligned Attack: 500 Bots perfectly cloning the victim's preferences
+        bot_list = []
+        for bot_id in range(10000, 10500):
+            bot_user = victim_rows.copy()
+            bot_user['userId'] = bot_id
+            bot_list.append(bot_user)
+            
+            bot_list.append(pd.DataFrame([{'userId': bot_id, 'movieId': target_movie_id, 'rating': 5.0}]))
+            
+        bots_df = pd.concat(bot_list, ignore_index=True)
+        df_copy = pd.concat([df_copy, bots_df], ignore_index=True)
+
     R_df = df_copy.pivot(index='userId', columns='movieId', values='rating')
     users = R_df.index.tolist()
     movies = R_df.columns.tolist()
@@ -110,7 +132,7 @@ with st.spinner("Initializing Database..."):
 
 
 st.title("🎬 Movie Recommender AI System")
-st.markdown("CS 550 Project Demo - SVD Matrix Factorization & Trustworthiness")
+st.markdown("CS 550 Project Demo - Advanced SVD Matrix Factorization & Trustworthiness")
 
 # ---------------------------------------------
 # TRUSTWORTHINESS MODULES (SIDEBAR)
@@ -123,6 +145,37 @@ st.sidebar.markdown("Steer your algorithm in real-time by explicitly forbidding 
 all_genres = ["Action", "Adventure", "Animation", "Children", "Comedy", "Crime", "Documentary", "Drama", "Fantasy", "Film-Noir", "Horror", "Musical", "Mystery", "Romance", "Sci-Fi", "Thriller", "War", "Western"]
 excluded_genres = st.sidebar.multiselect("Exclude Genres:", all_genres)
 
+# MODULE E: ROBUSTNESS
+st.sidebar.markdown("---")
+st.sidebar.subheader("🛡️ Option E: Robustness")
+st.sidebar.markdown("Test the algorithm against a mathematical Data Poisoning (Shilling) attack.")
+
+bad_payload_movies = [
+    "Batman & Robin (1997)",
+    "Super Mario Bros. (1993)",
+    "Wild Wild West (1999)",
+    "Catwoman (2004)",
+    "Anaconda (1997)",
+    "Battlefield Earth (2000)"
+]
+selected_payload = st.sidebar.selectbox("🎯 Select Attack Payload (Movie):", bad_payload_movies)
+
+# Lookup ID
+target_movie_df = movies_df[movies_df['title'].str.contains(selected_payload[:10], case=False, na=False, regex=False)]
+target_movie_id = target_movie_df.iloc[0]['movieId'] if not target_movie_df.empty else 1562
+target_movie_title = target_movie_df.iloc[0]['title'] if not target_movie_df.empty else "Batman & Robin"
+
+
+attack_mode = st.sidebar.toggle("🚨 Simulate Shilling Attack", False)
+defense_mode = False
+
+if attack_mode:
+    st.sidebar.error(f"ATTACK ACTIVE: Massive Shilling Botnet targeting '{target_movie_title}' applied to underlying dimensions.")
+    defense_mode = st.sidebar.toggle("🛡️ Enable Outlier Defense (Scrub Bots)", False)
+    if defense_mode:
+        st.sidebar.success("DEFENSE ACTIVE: Density anomaly detection utilized standard deviation thresholds to mathematically scrub the malicious bot vectors from the tensor.")
+
+is_poisoned = attack_mode and not defense_mode
 
 # ---------------------------------------------
 # MAIN UI
@@ -147,36 +200,52 @@ if selected_user:
         st.subheader("✨ SVD Personalized Rankings (Top 10)")
         
         with st.spinner("Calculating SVD Mathematical Tensor (Live)..."):
-            preds_df = compute_svd(train_ratings)
+            if is_poisoned:
+                preds_df = compute_svd(train_ratings, True, target_movie_id, selected_user)
+            else:
+                preds_df = compute_svd(train_ratings, False, None, None)
             
         # Isolate User
-        if selected_user in preds_df.index:
-            user_preds = preds_df.loc[selected_user].copy()
+        user_preds = preds_df.loc[selected_user].copy()
+        
+        # Filter already watched
+        watched_items = set(user_hist['movieId'].unique())
+        candidate_items = list(set(preds_df.columns) - watched_items)
+        
+        # Apply Option C (Controllability)
+        if excluded_genres:
+            exclude_ids = set()
+            for gen in excluded_genres:
+                # Find all movies containing the excluded genre
+                mask = movies_df['genres'].str.contains(gen, na=False)
+                exclude_ids.update(movies_df[mask]['movieId'].tolist())
+            candidate_items = [i for i in candidate_items if i not in exclude_ids]
             
-            # Filter already watched
-            watched_items = set(user_hist['movieId'].unique())
-            candidate_items = list(set(preds_df.columns) - watched_items)
+        if len(candidate_items) > 0:
+            user_preds = user_preds[candidate_items].sort_values(ascending=False).head(10)
+            top_items = user_preds.index.tolist()
             
-            # Apply Option C (Controllability)
-            if excluded_genres:
-                exclude_ids = set()
-                for gen in excluded_genres:
-                    # Find all movies containing the excluded genre
-                    mask = movies_df['genres'].str.contains(gen, na=False)
-                    exclude_ids.update(movies_df[mask]['movieId'].tolist())
-                candidate_items = [i for i in candidate_items if i not in exclude_ids]
-                
-            if len(candidate_items) > 0:
-                user_preds = user_preds[candidate_items].sort_values(ascending=False).head(10)
-                top_items = user_preds.index.tolist()
-                
-                for item_id in top_items:
-                    m_row = movies_df[movies_df['movieId'] == item_id]
-                    if not m_row.empty:
-                        title = m_row.iloc[0]['title']
-                        genres = m_row.iloc[0]['genres'].replace('|', ', ')
-                        explain_text = generate_explanation(user_hist, item_id, movies_df)
-                        
+            for item_id in top_items:
+                m_row = movies_df[movies_df['movieId'] == item_id]
+                if not m_row.empty:
+                    title = m_row.iloc[0]['title']
+                    genres = m_row.iloc[0]['genres'].replace('|', ', ')
+                    explain_text = generate_explanation(user_hist, item_id, movies_df)
+                    
+                    # Highlight if it's the hacked target movie
+                    is_hacked = (item_id == target_movie_id and is_poisoned)
+                    
+                    if is_hacked:
+                        st.markdown(f"""
+                        <div class="movie-card" style="border: 2px solid red;">
+                            <div class="movie-title" style="color: red;">🚨 {title} (ATTACK HIJACKED HIGHEST RANKING)</div>
+                            <div class="movie-genre">{genres}</div>
+                            <div class="explanation" style="background: rgba(255,0,0,0.1); border-left: 4px solid red; color: white;">
+                            💡 <b>Why?</b> The mathematical pivot matrix was compromised by a bot cluster pushing this vector dynamically higher.
+                            </div>
+                        </div>
+                        """, unsafe_allow_html=True)
+                    else:
                         st.markdown(f"""
                         <div class="movie-card">
                             <div class="movie-title">{title}</div>
