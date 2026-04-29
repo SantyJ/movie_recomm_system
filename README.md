@@ -78,6 +78,11 @@ This single command will sequentially execute:
 3. **Ranking Verification:** Strictly validating recommendation ordering using NDCG, Recall, and F1 limits.
 4. **Graphing Automation:** Regenerating the comparative visualization charts locally based exclusively on the current model run outputs.
 
+### Optional Deep-Dive Scripts
+For grading and evaluation purposes, the `run_project.py` wrapper covers the primary execution workflow. However, we have also included two standalone diagnostic scripts for deeper inspection:
+* **`python verify_metrics.py`**: Executes an isolated user-by-user breakdown of the Top-10 ranking metrics for a small subset of sample users, outputting directly to `processed/metrics_verification_report.txt`.
+* **`python generate_report.py`**: A secondary utility for isolated reporting.
+
 ---
 
 ## The Trustworthiness Demo (Streamlit Interface)
